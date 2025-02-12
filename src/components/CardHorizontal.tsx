@@ -1,24 +1,87 @@
-import { Box, Button, Card, Image } from "@chakra-ui/react";
+import { Box, Button, Card, Image, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
-export const CardHorizontal = () => (
-  <Card.Root flexDirection="row" overflow="hidden" maxW="xl">
-    <Image
-      objectFit="cover"
-      maxW="200px"
-      src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-      alt="Caffe Latte"
-    />
-    <Box>
-      <Card.Body>
-        <Card.Title mb="2">The perfect latte</Card.Title>
-        <Card.Description>
-          Caffè latte is a coffee beverage of Italian origin made with espresso
-          and steamed milk.
-        </Card.Description>
-      </Card.Body>
-      <Card.Footer>
-        <Button>Buy Latte</Button>
-      </Card.Footer>
-    </Box>
-  </Card.Root>
-);
+export interface CardHorizontalProps {
+  id: number;
+  title: string;
+  location: string;
+  type: "Авто" | "Недвижимость" | "Услуга";
+  image?: string;
+}
+
+export const CardHorizontal = ({
+  id,
+  title,
+  location,
+  type,
+  image,
+}: CardHorizontalProps) => {
+  const placeholder = "https://via.placeholder.com/200?text=No+Image";
+
+  return (
+    <Card.Root
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      overflow="hidden"
+      maxW="2xl"
+      w="full"
+      p="4"
+      gap="4"
+    >
+      {/* Фото с заглушкой */}
+      {image ? (
+        <Image
+          objectFit="cover"
+          maxW={{ base: "150px", md: "250px" }}
+          minW={{ base: "150px", md: "250px" }}
+          h={{ base: "100px", md: "150px" }}
+          src={image || placeholder}
+          alt={title}
+          borderRadius="md"
+        />
+      ) : (
+        <Image
+          objectFit="contain"
+          maxW={{ base: "150px", md: "250px" }}
+          minW={{ base: "150px", md: "250px" }}
+          h={{ base: "100px", md: "150px" }}
+          src="https://st4.depositphotos.com/14953852/22772/v/450/depositphotos_227725020-stock-illustration-image-available-icon-flat-vector.jpg"
+          alt="not found image"
+          borderRadius="md"
+        />
+      )}
+
+      {/* Контент карточки */}
+      <Box
+        display="flex"
+        alignItems={{ base: "flex-start", sm: "center" }}
+        w="full"
+        justifyContent="space-around"
+        flexDirection={{ base: "column", sm: "row" }}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          rowGap={{ base: "2", md: "6" }}
+        >
+          <Text fontSize="xl" fontWeight="bold">
+            {title}
+          </Text>
+          <Text fontSize="sm" color="gray.600">
+            {location}
+          </Text>
+          <Text fontSize="sm" fontWeight="semibold" color="blue.500">
+            {type}
+          </Text>
+        </Box>
+        {/* Кнопка "Открыть" */}
+        <Box>
+          <Button size={{ base: "sm", md: "lg" }}>
+            <Link to={`/item/${id}`}>Открыть</Link>
+          </Button>
+        </Box>
+      </Box>
+    </Card.Root>
+  );
+};
