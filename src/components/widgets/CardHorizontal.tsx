@@ -3,15 +3,15 @@ import { Link } from "react-router-dom";
 
 export interface CardHorizontalProps {
   id: number;
-  title: string;
+  name: string;
   location: string;
-  type: "Авто" | "Недвижимость" | "Услуга";
+  type: "Авто" | "Недвижимость" | "Услуги";
   image?: string;
 }
 
 export const CardHorizontal = ({
   id,
-  title,
+  name,
   location,
   type,
   image,
@@ -37,7 +37,7 @@ export const CardHorizontal = ({
           minW={{ base: "150px", md: "250px" }}
           h={{ base: "100px", md: "150px" }}
           src={image || placeholder}
-          alt={title}
+          alt={name}
           borderRadius="md"
         />
       ) : (
@@ -66,7 +66,7 @@ export const CardHorizontal = ({
           rowGap={{ base: "2", md: "6" }}
         >
           <Text fontSize="xl" fontWeight="bold">
-            {title}
+            {name}
           </Text>
           <Text fontSize="sm" color="gray.600">
             {location}
@@ -77,7 +77,7 @@ export const CardHorizontal = ({
         </Box>
         {/* Кнопка "Открыть" */}
         <Box>
-          <Button size={{ base: "sm", md: "lg" }}>
+          <Button asChild size={{ base: "sm", md: "lg" }}>
             <Link to={`/item/${id}`}>Открыть</Link>
           </Button>
         </Box>
