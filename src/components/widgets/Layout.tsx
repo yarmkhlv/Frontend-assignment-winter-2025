@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { Header } from "./Header";
 
 import { ReactNode } from "react";
@@ -13,7 +13,18 @@ const queryClient = new QueryClient();
 
 export const Layout = ({ children }: LayoutProps) => (
   <QueryClientProvider client={queryClient}>
-    <Header />
-    <Box as="main">{children}</Box>
+    <Flex direction="column" minH="100dvh">
+      <Header />
+
+      <Box
+        as="main"
+        flex={1}
+        display="flex"
+        flexDirection="column"
+        position="relative"
+      >
+        {children}
+      </Box>
+    </Flex>
   </QueryClientProvider>
 );
