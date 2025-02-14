@@ -1,45 +1,21 @@
-import { CardHorizontal } from "@/components/widgets/CardHorizontal";
-import {
-  Box,
-  Flex,
-  Heading,
-  Container,
-  Button,
-  Group,
-  createListCollection,
-} from "@chakra-ui/react";
-import {
-  PaginationItems,
-  PaginationNextTrigger,
-  PaginationPrevTrigger,
-  PaginationRoot,
-} from "@/components/ui/pagination";
-import {
-  SelectContent,
-  SelectItem,
-  SelectLabel,
-  SelectRoot,
-  SelectTrigger,
-  SelectValueText,
-} from "@/components/ui/select";
-import { Link } from "react-router-dom";
+import { Box, Flex, Heading, Container, Spinner } from "@chakra-ui/react";
 import { useState } from "react";
 import { useGetAdvertisementList } from "@/hooks/useGetAdvertisementList";
-import type { AdType } from "@/types/types";
+import { AdvertisementList } from "@/components/widgets/AdvertisementList/AdvertisementList";
+import { Pagination } from "@/components/widgets/Pagination/Pagination";
+import { SelectWrapper } from "@/components/ui/SelectWrapper/SelectWrapper";
+import { ButtonLink } from "@/components/ui/ButtonLink/ButtonLink";
 
 const ITEMS_PER_PAGE = 5;
 
-const typeFilters = createListCollection({
-  items: [
-    { label: "Недвижимость", value: "Недвижимость" },
-    { label: "Авто", value: "Авто" },
-    { label: "Услуги", value: "Услуги" },
-    { label: "Без фильтра", value: "Без фильтра" },
-  ],
-});
+const typeFilters = [
+  { label: "Недвижимость", value: "Недвижимость" },
+  { label: "Авто", value: "Авто" },
+  { label: "Услуги", value: "Услуги" },
+];
 
 export function ListPage() {
-  const [typeFilter, setTypeFilter] = useState<string[]>([]);
+  const [typeFilter, setTypeFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const {
     data: advertisementList,
@@ -48,86 +24,47 @@ export function ListPage() {
   } = useGetAdvertisementList();
 
   if (isLoading) {
-    return <div>Загрузка...</div>;
+    return (
+      <Box w="full" h="full">
+        <Flex alignItems="center" justifyContent="center">
+          <Spinner />
+        </Flex>
+      </Box>
+    );
   }
 
   if (isError) {
     return <div>Ошибка при загрузке объявлений</div>;
   }
 
-  // Пагинация
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentItems = advertisementList.slice(startIndex, endIndex);
-
   const totalPages = Math.ceil(advertisementList.length / ITEMS_PER_PAGE);
 
-  const handlePageChange = (details: { page: number }) => {
-    setCurrentPage(details.page);
-  };
-
   return (
-    <Container py={{ base: 4, md: 8 }}>
-      <Box>
-        <Flex justify="space-between" align="center" mb={4}>
-          <Heading size={{ base: "sm", md: "2xl" }}>Список объявлений</Heading>
-          <Button asChild size={{ base: "xs", md: "lg" }} colorPalette="blue">
-            <Link to="/form"> Разместить объявление</Link>
-          </Button>
-        </Flex>
+    <Container maxW="2xl" py={{ base: 4, md: 8 }}>
+      <Flex justify="space-between" align="center" mb={4}>
+        <Heading size={{ base: "sm", md: "md" }}>Список объявлений</Heading>
+        <ButtonLink to="/form" text="Разместить объявление" />
+      </Flex>
 
-        {/* Фильтрация селектом */}
-        <Box mb={{ base: 4, md: 8 }}>
-          <SelectRoot
-            collection={typeFilters}
-            size={{ base: "sm", md: "md" }}
-            width="full"
-            maxW={{ base: "xs", md: "sm" }}
-            value={typeFilter}
-            onValueChange={(e) => setTypeFilter(e.value)}
-          >
-            <SelectLabel>Категории</SelectLabel>
-            <SelectTrigger>
-              <SelectValueText placeholder="Выбрать фильтр" />
-            </SelectTrigger>
-            <SelectContent>
-              {typeFilters.items.map((filter) => (
-                <SelectItem item={filter} key={filter.value}>
-                  {filter.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </SelectRoot>
-        </Box>
-
-        {/* Список объявлений */}
-
-        <Flex
-          gap="4"
-          direction="column"
-          alignItems="center"
-          mb={{ base: 4, md: 8 }}
-        >
-          {currentItems.map((item: AdType) => (
-            <CardHorizontal key={item.id} {...item} />
-          ))}
-        </Flex>
-        <Box display="flex" justifyContent="center">
-          <PaginationRoot
-            count={totalPages}
-            pageSize={1}
-            defaultPage={currentPage}
-            variant="solid"
-            onPageChange={handlePageChange}
-          >
-            <Group attached>
-              <PaginationPrevTrigger />
-              <PaginationItems />
-              <PaginationNextTrigger />
-            </Group>
-          </PaginationRoot>
-        </Box>
+      <Box mb={{ base: 4, md: 8 }}>
+        <SelectWrapper
+          placeholder="Выбрать фильтр"
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          items={typeFilters}
+        />
       </Box>
+
+      <AdvertisementList items={currentItems} />
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        setCurrentPage={setCurrentPage}
+      />
     </Container>
   );
 }

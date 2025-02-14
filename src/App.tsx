@@ -2,18 +2,19 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { FormPage } from "./pages/FormPage ";
 import { ListPage } from "./pages/ListPage";
 import { Layout } from "./components/widgets/Layout";
-// import ItemPage from "./pages/ItemPage";
+import { AdPage } from "./pages/AdPage";
+import { ROUTES } from "./variables/routes";
 
 function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Navigate to="/list" replace />} />
+        <Route path="/" element={<Navigate to={ROUTES.AD_LIST} replace />} />
 
         <Route path="/form" element={<FormPage />} />
-        <Route path="/list" element={<ListPage />} />
-        {/* <Route path="/item/:id" element={<ItemPage />} /> */}
-        <Route path="*" element={<Navigate to="/list" replace />} />
+        <Route path={ROUTES.AD_LIST} element={<ListPage />} />
+        <Route path={ROUTES.AD} element={<AdPage />} />
+        <Route path="*" element={<Navigate to={ROUTES.AD_LIST} replace />} />
       </Routes>
     </Layout>
   );
