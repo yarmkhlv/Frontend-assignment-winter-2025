@@ -9,10 +9,15 @@ const fetchAdvertisement = async (id: string): Promise<AdType> => {
   return response.json();
 };
 
-export const useGetAdvertisement = (id: string) => {
+export const useGetAdvertisement = (id: string | undefined) => {
   return useQuery<AdType, Error>({
     queryKey: ["advertisement", id],
-    queryFn: () => fetchAdvertisement(id),
+    queryFn: () => {
+      if (!id) {
+        throw new Error("ID is required for fetching advertisement");
+      }
+      return fetchAdvertisement(id);
+    },
     enabled: !!id,
   });
 };

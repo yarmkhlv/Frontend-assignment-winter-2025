@@ -11,7 +11,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to={ROUTES.AD_LIST} replace />} />
 
-        <Route path="/form" element={<FormPage />} />
+        <Route path={ROUTES.FORM} element={<FormPage />} />
+        <Route path={ROUTES.FORM_AD_EDIT} element={<FormPage />} />
         <Route path={ROUTES.AD_LIST} element={<ListPage />} />
         <Route path={ROUTES.AD} element={<AdPage />} />
         <Route path="*" element={<Navigate to={ROUTES.AD_LIST} replace />} />

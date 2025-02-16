@@ -19,7 +19,7 @@ import { AdDetails } from "@/components/widgets/AdDetails/AdDetails";
 
 export const AdPage = () => {
   const { id } = useParams<{ id: string }>();
-  const { data: ad, isLoading, isError, error } = useGetAdvertisement(id!);
+  const { data: ad, isLoading, isError, error } = useGetAdvertisement(id);
 
   if (isLoading) {
     return (
@@ -60,7 +60,7 @@ export const AdPage = () => {
           <Flex flexDirection="column">
             <Button
               as={Link}
-              to={`/edit/${ad.id}`}
+              to={`/form/${ad.id}`}
               colorScheme="blue"
               size="md"
               boxShadow="md"
