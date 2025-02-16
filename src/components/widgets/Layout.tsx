@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Box, Flex } from "@chakra-ui/react";
-import { Header } from "./Header";
+import { Header } from "./Header/Header";
 
 import { ReactNode } from "react";
 

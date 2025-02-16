@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const createAd = async (data: any) => {
-  const response = await fetch("http://localhost:3000/items", {
+  const response = await fetch(`${API_URL}/items`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

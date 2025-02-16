@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { AdType } from "@/types/types";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const fetchAdvertisement = async (id: string): Promise<AdType> => {
-  const response = await fetch(`http://localhost:3000/items/${id}`);
+  const response = await fetch(`${API_URL}/items/${id}`);
   if (!response.ok) {
     throw new Error("Ошибка при загрузке объявления");
   }

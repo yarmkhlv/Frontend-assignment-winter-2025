@@ -1,6 +1,7 @@
 // useUpdateAd.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdType } from "@/types/types";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const updateAdvertisement = async ({
   id,
@@ -9,7 +10,7 @@ const updateAdvertisement = async ({
   id: string;
   data: AdType;
 }) => {
-  const response = await fetch(`http://localhost:3000/items/${id}`, {
+  const response = await fetch(`${API_URL}/items/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
