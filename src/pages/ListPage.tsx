@@ -1,5 +1,5 @@
-import { Box, Flex, Heading, Container } from "@chakra-ui/react";
-import { ChangeEvent, useState } from "react";
+import { Box, Flex, Heading, Container, Input } from "@chakra-ui/react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useGetAdvertisementList } from "@/hooks/useGetAdvertisementList";
 import { AdvertisementList } from "@/components/widgets/AdvertisementList/AdvertisementList";
 import { Pagination } from "@/components/widgets/Pagination/Pagination";
@@ -9,6 +9,7 @@ import { usePagination } from "@/hooks/usePagination";
 import { AdType } from "@/types/types";
 import { ErrorLoading } from "@/components/ui/ErrorLoading/ErrorLoading";
 import { Loader } from "@/components/ui/Loader/Loader";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const ITEMS_PER_PAGE = 1;
 
@@ -20,6 +21,8 @@ const typeFilters = [
 
 export function ListPage() {
   const [typeFilter, setTypeFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
   const {
     data: advertisementList = [],
@@ -31,15 +34,31 @@ export function ListPage() {
     ? advertisementList.filter((item: AdType) => item.type === typeFilter)
     : advertisementList;
 
-  const { currentPage, totalPages, startIndex, endIndex, setCurrentPage } =
-    usePagination(filteredList.length, ITEMS_PER_PAGE);
+  const filteredListIncludeQueries = searchQuery
+    ? filteredList.filter((item: AdType) =>
+        item.name.includes(debouncedSearchQuery)
+      )
+    : filteredList;
 
-  const currentItems = filteredList.slice(startIndex, endIndex);
+  const { currentPage, totalPages, startIndex, endIndex, setCurrentPage } =
+    usePagination(filteredListIncludeQueries.length, ITEMS_PER_PAGE);
+
+  const currentItems = filteredListIncludeQueries.slice(startIndex, endIndex);
 
   const handleChangeSelect = (e: ChangeEvent<HTMLSelectElement>) => {
     setTypeFilter(e.target.value);
     setCurrentPage(1);
   };
+
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  });
 
   if (isLoading) {
     return <Loader />;
@@ -57,6 +76,12 @@ export function ListPage() {
       </Flex>
 
       <Box mb={{ base: 4, md: 8 }}>
+        <Input
+          placeholder="Поиск по названию"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          mb={4}
+        />
         <SelectWrapper
           placeholder="Выбрать фильтр"
           value={typeFilter}
