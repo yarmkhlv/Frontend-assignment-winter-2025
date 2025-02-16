@@ -1,4 +1,3 @@
-// useUpdateAd.ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdType } from "@/types/types";
 const API_URL = import.meta.env.VITE_API_URL;

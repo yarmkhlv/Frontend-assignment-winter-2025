@@ -9,6 +9,9 @@ import { StepOneForm, StepTwoForm } from "../components/widgets/Forms";
 import { Loader } from "@/components/ui/Loader/Loader";
 import { useGetAdvertisement } from "@/hooks/useGetAdvertisement";
 import { useUpdateAd } from "@/hooks/useUpdateAd";
+import { useBeforeUnload } from "@/hooks/useBeforeUnload";
+
+const DRAFT_KEY = "advertisement_draft";
 
 export function FormPage() {
   const { id } = useParams();
@@ -18,17 +21,31 @@ export function FormPage() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  // Используем ваш хук для получения данных
   const { data: adData, isLoading, isError } = useGetAdvertisement(id);
   const { mutate: createMutate } = useCreateAd();
   const { mutate: updateMutate } = useUpdateAd(id!);
 
-  // Заполняем форму данными при их получении
+  useBeforeUnload(() => {
+    if (!isEditMode) {
+      const formData = formMethods.watch();
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(formData));
+    }
+  });
+
   useEffect(() => {
-    if (isEditMode && adData) {
-      formMethods.reset(adData);
+    if (isEditMode) {
+      if (adData) formMethods.reset(adData);
+    } else {
+      const draft = localStorage.getItem(DRAFT_KEY);
+      if (draft) formMethods.reset(JSON.parse(draft));
     }
   }, [isEditMode, adData, formMethods]);
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem(DRAFT_KEY);
+    };
+  }, []);
 
   const handleSuccess = () => {
     toast({
